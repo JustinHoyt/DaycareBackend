@@ -15,9 +15,11 @@ import java.util.List;
 @Entity
 @Builder
 public class Parent {
+
     @Id
     @GeneratedValue
     private Integer id;
+
     @ManyToMany
     @JsonIgnore
     @JoinTable(
@@ -25,6 +27,7 @@ public class Parent {
             joinColumns = { @JoinColumn(name = "parentId") },
             inverseJoinColumns = { @JoinColumn(name = "childId") }
     )
+
     private List<Child> children;
     private String name;
     private Integer age;

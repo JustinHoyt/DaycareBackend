@@ -15,12 +15,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Child {
+
     @Id
     @GeneratedValue
     private Integer id;
+
     @ManyToMany(mappedBy = "children")
     @JsonIgnore
     private List<Parent> parents;
+
     private String name;
     private Integer age;
 }

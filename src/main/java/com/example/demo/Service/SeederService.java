@@ -4,7 +4,6 @@ import com.example.demo.Entities.Child;
 import com.example.demo.Entities.Parent;
 import com.example.demo.Repository.ChildRepository;
 import com.example.demo.Repository.ParentRepository;
-import com.example.demo.Seeders.ParentSeeder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -12,7 +11,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -20,9 +18,6 @@ public class SeederService {
 
     @Autowired
     Environment env;
-
-//    @Autowired
-//    ParentSeeder parentSeeder;
 
     @Autowired
     ParentRepository parentRepository;
