@@ -17,8 +17,8 @@ public class ParentController {
     ParentRepository parentRepository;
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public void postParent(@RequestBody Parent parent) {
-        parentRepository.save(parent);
+    public Parent postParent(@RequestBody Parent parent) {
+        return parentRepository.save(parent);
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)

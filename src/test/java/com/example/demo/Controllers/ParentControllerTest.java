@@ -3,6 +3,7 @@ package com.example.demo.Controllers;
 import com.example.demo.Entities.Child;
 import com.example.demo.Entities.Parent;
 import com.example.demo.Repository.ParentRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.junit.Before;
@@ -16,13 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import static java.util.Arrays.asList;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -53,20 +50,17 @@ public class ParentControllerTest {
     @Before
     public void setUp() throws Exception {
         child1 = Child.builder()
-                .id(2)
-                .parents(Arrays.asList(parent))
+                .parents(asList(parent))
                 .name("sam")
                 .age(2)
                 .build();
         child2 = Child.builder()
-                .id(3)
-                .parents(Arrays.asList(parent))
+                .parents(asList(parent))
                 .name("paul")
                 .age(3)
                 .build();
-        List<Child> children = Arrays.asList(child1, child2);
+        List<Child> children = asList(child1, child2);
         parent = Parent.builder()
-                .id(1)
                 .name("Ben")
                 .age(24)
                 .children(children)
@@ -76,10 +70,10 @@ public class ParentControllerTest {
 
     @Test
     public void shouldReturnChildrenOfParent() throws Exception {
-        JSONArray expectedResponse = getExpectedResponse();
-
-        JSONObject requestBody = new JSONObject();
-        requestBody.appendField("id", 1);
+        ObjectMapper mapper = new ObjectMapper();
+        JSONArray expectedResponse = new JSONArray();
+        expectedResponse.appendElement(new JSONObject(mapper.convertValue(child1, Map.class)));
+        expectedResponse.appendElement(new JSONObject(mapper.convertValue(child2, Map.class)));
 
         when(mockParentRepository.findById(1)).thenReturn(optionalParent);
 
@@ -89,16 +83,32 @@ public class ParentControllerTest {
                 .andExpect(content().json(expectedResponse.toJSONString()));
     }
 
-    private JSONArray getExpectedResponse() {
-        JSONArray expectedResponse = new JSONArray();
-        JSONObject child1Json = new JSONObject();
-        child1Json.appendField("name", "sam");
-        child1Json.appendField("age", 2);
-        JSONObject child2Json = new JSONObject();
-        child2Json.appendField("name", "paul");
-        child2Json.appendField("age", 3);
-        expectedResponse.appendElement(child1Json);
-        expectedResponse.appendElement(child2Json);
-        return expectedResponse;
+    @Test
+    public void shouldReturnParent() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JSONObject expectedResponse = new JSONObject(mapper.convertValue(parent, Map.class));
+
+        when(mockParentRepository.findById(1)).thenReturn(optionalParent);
+
+        mockMvc.perform(get("/parent?parentId=1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResponse.toJSONString()));
     }
+
+    @Test
+    public void shouldSaveParent() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JSONObject requestBody = new JSONObject(mapper.convertValue(parent, Map.class));
+        when(mockParentRepository.save(parent)).thenReturn(parent);
+
+        JSONObject expectedJson = new JSONObject(mapper.convertValue(parent, Map.class));
+
+        System.out.println(expectedJson);
+        mockMvc.perform(post("/parent")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody.toJSONString()))
+                .andExpect(status().isOk());
+    }
+
 }

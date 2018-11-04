@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 @Service
 public class SeederService {
 
@@ -45,7 +47,7 @@ public class SeederService {
                 .age(24)
                 .build();
 
-        List<Child> children = Arrays.asList(child1, child2);
+        List<Child> children = asList(child1, child2);
         children = childRepository.saveAll(children);
 
         parent = Parent.builder()
