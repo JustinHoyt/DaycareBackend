@@ -28,11 +28,11 @@ public class SeederService {
     @EventListener
     public void seed(ContextRefreshedEvent event) {
         if ("dev".equals(env.getProperty("spring.profiles.active"))) {
-            seedParentWith2Children();
+            seedParentWithTwoChildren();
         }
     }
 
-    private void seedParentWith2Children() {
+    private void seedParentWithTwoChildren() {
         Child child1;
         Child child2;
         Parent parent;
